@@ -1,0 +1,20 @@
+from sklearn import datasets
+from six.moves import cPickle as pickle
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+import numpy as np
+from six.moves import cPickle as pickle
+
+iris = datasets.load_iris()
+datasets = iris.data
+labels = iris.target
+
+with open('linearReg94', 'rb') as f:
+    clf = pickle.load(f)
+
+predictions = clf.predict(datasets)
+
+diff = predictions - labels
+correct = np.where(diff == 0)
+print(len(correct[0])/len(labels))
+
