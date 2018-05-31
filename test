@@ -1,0 +1,24 @@
+from sklearn import datasets, linear_model
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from six.moves import cPickle as pickle
+
+iris = datasets.load_iris()
+
+datasets = iris.data
+labels = iris.target
+
+x_train, x_test, y_train, y_test = train_test_split(datasets, labels, test_size=0.5, random_state=50)
+
+num_cv = 10
+clf = LogisticRegression(penalty='l2', solver='liblinear')
+clf.fit(x_train, y_train)
+
+confident = clf.score(x_test, y_test)
+try:
+    with open('linearReg94', 'wb') as f:
+        pickle.dump(clf, f, pickle.HIGHEST_PROTOCOL)
+except Exception as e:
+    print('Unable to save data', e)
+
+print(confident)
