@@ -1,0 +1,44 @@
+import pandas
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+import matplotlib as plt
+
+def remove_data_from_col(df, col, data):
+    for c, i in enumerate(df[col]):
+        if i == data:
+            df.drop(axis=1, index=c, inplace=True)
+    return df
+
+
+def text2float(df, col):
+    words = []
+    index = df.index.values
+    for i in df[col]:
+        if i not in words:
+            words.append(i)
+
+    for c, i in enumerate(df[col]):
+        num = words.index(i)
+        df.iloc[c, df.columns.get_loc('Sex')] = num
+
+    return df
+
+########################################################################################################################
+
+df = pandas.read_csv('./dataset/abalone.data',
+                     names=['Sex', 'Length', 'Diameter', 'Height', 'Whole weight', 'Shucked weight', 'Viscera weight',
+                            'Shell weight', 'Rings'])
+
+df = remove_data_from_col(df, 'Sex', 'I')
+df.fillna(value=-99999, inplace=True)
+new_df = text2float(df, 'Sex')
+
+labels = new_df['Sex']
+dataset = new_df.drop(['Sex'], axis=1)
+
+x_train, x_test, y_train, y_test = train_test_split(dataset, labels, test_size=0.2, random_state=50)
+
+clf = LogisticRegression()
+clf.fit(x_train, y_train)
+confident = clf.score(x_test, y_test)
+print(confident)
